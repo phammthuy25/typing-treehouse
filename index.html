@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}</style>
+<title>Typing Treehouse</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Atkinson+Hyperlegible+Mono:wght@400;600&family=Fredoka:wght@500;600;700&display=swap">
+<style>
+/* Layout: one centered column; a lesson map of "branches", a typing desk with text, keyboard and hands stacked. */
+:root {
+  --bg: #EAF4EE;
+  --surface: #FFFFFF;
+  --surface-2: #F4FAF6;
+  --ink: #16383A;
+  --muted: #557069;
+  --line: #CFE2D8;
+  --accent: #0E7C6B;
+  --accent-ink: #FFFFFF;
+  --sun: #FFC23D;
+  --coral: #F0614B;
+  --good: #2E9E5B;
+  --on-color: #15302F;
+  --f-lp: #F38C8C; --f-lr: #F7A95E; --f-lm: #F1D057; --f-li: #78CF8F;
+  --f-ri: #5EC0DE; --f-rm: #8DA6F2; --f-rr: #BC95EC; --f-rp: #EF94CB; --f-th: #B7C6C0;
+  --font-display: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-type: "Atkinson Hyperlegible Mono", ui-monospace, "Cascadia Mono", Menlo, monospace;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1E20; --surface: #16302F; --surface-2: #1B3836; --ink: #E6F3EE; --muted: #9DB9B1;
+    --line: #2B4B47; --accent: #3CC7A8; --accent-ink: #0B2220; --sun: #FFCB55; --coral: #FF7A63; --good: #4CC27C;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1E20; --surface: #16302F; --surface-2: #1B3836; --ink: #E6F3EE; --muted: #9DB9B1;
+  --line: #2B4B47; --accent: #3CC7A8; --accent-ink: #0B2220; --sun: #FFCB55; --coral: #FF7A63; --good: #4CC27C;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+#app { max-width: 1040px; margin: 0 auto; padding-block: 12px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.15rem; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+.btn { border: 0; border-radius: 999px; padding: 10px 20px; font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; background: var(--accent); color: var(--accent-ink); box-shadow: 0 3px 0 rgba(0,0,0,.18); transition: transform .08s; }
+.btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,.18); }
+.btn.ghost { background: var(--surface); color: var(--ink); border: 2px solid var(--line); box-shadow: none; }
+.btn.sun { background: var(--sun); color: var(--on-color); }
+.btn.small { padding: 6px 14px; font-size: .95rem; }
+.muted { color: var(--muted); }
+.label { font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* Top bar */
+.topbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-block: 6px 14px; border-bottom: 2px dashed var(--line); margin-bottom: 18px; }
+.brand { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; margin-right: auto; display: flex; align-items: center; gap: 8px; }
+.brand svg { width: 30px; height: 30px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 2px solid var(--line); border-radius: 999px; padding: 4px 12px; font-weight: 700; }
+.chip .av { font-size: 1.2rem; }
+.iconbtn { background: var(--surface); border: 2px solid var(--line); border-radius: 999px; padding: 4px 12px; font-weight: 700; }
+
+/* Who's typing */
+.who { display: grid; gap: 24px; padding-top: 24px; }
+.who-hero { display: grid; gap: 8px; }
+.profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
+.profile { background: var(--surface); border: 3px solid var(--line); border-radius: var(--radius); padding: 18px 12px 14px; display: grid; justify-items: center; gap: 4px; text-align: center; }
+.profile:hover { border-color: var(--accent); }
+.profile .big { font-size: 3rem; line-height: 1; }
+.profile .nm { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; }
+.addcard { background: var(--surface-2); border: 3px dashed var(--line); border-radius: var(--radius); padding: 18px; display: grid; gap: 12px; max-width: 560px; }
+.addcard input[type=text] { font: inherit; font-size: 1.2rem; padding: 10px 14px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); width: 100%; }
+.avpick { display: flex; flex-wrap: wrap; gap: 8px; }
+.avpick button { font-size: 1.6rem; width: 50px; height: 50px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); }
+.avpick button[aria-pressed="true"] { border-color: var(--accent); background: var(--sun); }
+
+/* Map */
+.maphead { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between; margin-bottom: 18px; }
+.goal { min-width: 240px; flex: 1 1 260px; max-width: 380px; background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 6px; }
+.bar { height: 14px; background: var(--surface-2); border: 2px solid var(--line); border-radius: 999px; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--good); border-radius: 999px; transition: width .4s; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+.lessons { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+.lcard { position: relative; text-align: left; background: var(--surface); border: 3px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 8px; align-content: start; }
+.lcard:hover:not([disabled]) { border-color: var(--accent); }
+.lcard[disabled] { opacity: .55; cursor: not-allowed; }
+.lcard.next { border-color: var(--sun); box-shadow: 0 0 0 4px color-mix(in srgb, var(--sun) 35%, transparent); }
+.lcard .num { font-family: var(--font-display); font-weight: 700; color: var(--muted); font-size: .9rem; }
+.lcard .ttl { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; }
+.caps { display: flex; gap: 5px; flex-wrap: wrap; }
+.cap { font-family: var(--font-type); font-weight: 600; min-width: 30px; height: 30px; padding: 0 6px; display: inline-grid; place-items: center; border-radius: 7px; background: var(--surface-2); border: 2px solid var(--line); border-bottom-width: 4px; font-size: .95rem; }
+.stars { color: var(--line); font-size: 1.25rem; letter-spacing: 2px; line-height: 1; }
+.stars b { color: var(--sun); font-weight: 400; }
+.tag { position: absolute; top: 10px; right: 10px; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 2px 8px; border-radius: 999px; background: var(--sun); color: var(--on-color); }
+.tag.lock { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+
+/* Lesson */
+.lhead { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 14px; }
+.lhead h2 { margin-right: auto; }
+.stats { display: flex; gap: 10px; flex-wrap: wrap; }
+.stat { background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 4px 12px; min-width: 92px; }
+.stat .v { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+.desk { display: grid; gap: 10px; }
+.textpanel { position: relative; background: var(--surface); border: 3px solid var(--line); border-radius: 18px; padding: 16px 22px; font-family: var(--font-type); font-size: clamp(1.5rem, 3.6vw, 2.2rem); line-height: 1.7; letter-spacing: .02em; min-height: 130px; overflow-wrap: anywhere; }
+.textpanel .c { border-radius: 4px; color: var(--muted); }
+.textpanel .c.done { color: var(--good); }
+.textpanel .c.fixed { color: var(--coral); }
+.textpanel .c.cur { background: var(--sun); color: var(--on-color); box-shadow: 0 4px 0 var(--ink); }
+.textpanel .c.bad { animation: shake .25s; background: var(--coral); color: #fff; }
+.textpanel .c.sp.cur::after { content: ""; }
+@keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+.hint { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; min-height: 32px; flex-wrap: wrap; }
+.dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; border: 2px solid var(--ink); }
+.kbwrap { overflow-x: auto; }
+.kb { display: grid; gap: 5px; max-width: 820px; min-width: 520px; margin: 0 auto; padding: 10px; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; user-select: none; }
+.kr { display: flex; gap: 5px; }
+.k { flex: 1 1 0; height: 40px; border-radius: 8px; background: var(--surface-2); border: 2px solid var(--line); border-bottom: 5px solid var(--fc, var(--line)); display: grid; place-items: center; font-family: var(--font-type); font-weight: 600; font-size: 1rem; position: relative; transition: transform .08s, background .08s; }
+.k.w15 { flex-grow: 1.5; } .k.w18 { flex-grow: 1.8; } .k.w2 { flex-grow: 2.2; } .k.w25 { flex-grow: 2.6; } .k.space { flex-grow: 7; }
+.k.mod { font-family: var(--font-body); font-size: .72rem; color: var(--muted); }
+.k.bump::after { content: ""; position: absolute; bottom: 6px; width: 12px; height: 3px; border-radius: 2px; background: var(--muted); }
+.k.on { background: var(--fc); color: var(--on-color); transform: translateY(-2px); box-shadow: 0 0 0 3px var(--ink); }
+.k.press { transform: translateY(2px); }
+.guide { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.guide .hint { flex: 1 1 260px; min-width: 0; }
+.hands { flex: 0 1 300px; }
+.hands svg { width: 100%; max-width: 300px; height: auto; display: block; }
+.hands .fg { fill: var(--surface-2); stroke: var(--line); stroke-width: 2; transition: fill .1s; }
+.hands .palm { fill: var(--surface-2); stroke: var(--line); stroke-width: 2; }
+
+/* Intro overlay inside the desk */
+.intro { position: absolute; inset: 0; background: color-mix(in srgb, var(--surface) 94%, transparent); border-radius: 16px; display: grid; place-items: center; text-align: center; padding: 18px; font-family: var(--font-body); font-size: 1rem; line-height: 1.5; z-index: 2; }
+.intro .in { display: grid; gap: 12px; justify-items: center; max-width: 560px; }
+.intro .caps .cap { min-width: 52px; height: 52px; font-size: 1.5rem; }
+
+/* Modal */
+.modal { position: fixed; inset: 0; background: rgba(8, 24, 24, .55); display: grid; place-items: center; padding: 16px; z-index: 20; }
+.sheet { background: var(--surface); border-radius: 22px; border: 3px solid var(--line); padding: 26px; max-width: 460px; width: 100%; display: grid; gap: 14px; text-align: center; }
+.sheet .bigstars { font-size: 3rem; letter-spacing: 6px; color: var(--line); line-height: 1; }
+.sheet .bigstars b { color: var(--sun); font-weight: 400; display: inline-block; animation: popin .4s both; }
+.sheet .bigstars b:nth-child(2) { animation-delay: .2s; } .sheet .bigstars b:nth-child(3) { animation-delay: .4s; }
+@keyframes popin { from { transform: scale(0); } 70% { transform: scale(1.3); } to { transform: scale(1); } }
+.resgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.resgrid .stat { text-align: center; }
+.sheet .row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.newsticker { background: var(--surface-2); border: 2px dashed var(--sun); border-radius: 14px; padding: 10px; font-weight: 700; }
+.newsticker span { font-size: 2rem; display: block; }
+
+/* Game */
+.gamebox { position: relative; background: linear-gradient(var(--surface-2), var(--surface)); border: 3px solid var(--line); border-radius: 18px; overflow: hidden; }
+.gamebox canvas { display: block; width: 100%; height: 440px; }
+.hearts { color: var(--coral); font-size: 1.3rem; letter-spacing: 2px; }
+
+/* Progress */
+.cards4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.card { background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 4px; }
+.card .v { font-family: var(--font-display); font-weight: 700; font-size: 1.8rem; font-variant-numeric: tabular-nums; }
+.week { background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius); padding: 14px 14px 10px; margin-bottom: 20px; }
+.weekbars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; align-items: end; height: 150px; margin-top: 10px; position: relative; }
+.wb { display: grid; grid-template-rows: auto 1fr auto; height: 100%; text-align: center; font-size: .8rem; font-variant-numeric: tabular-nums; }
+.wb .col { align-self: end; background: var(--accent); border-radius: 6px 6px 0 0; min-height: 2px; }
+.wb .col.met { background: var(--good); }
+.wb .d { color: var(--muted); padding-top: 4px; }
+.tablewrap { overflow-x: auto; background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius); }
+table { border-collapse: collapse; width: 100%; min-width: 520px; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+th { font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+td.n { text-align: right; font-variant-numeric: tabular-nums; }
+th.n { text-align: right; }
+.note { margin-top: 14px; font-size: .92rem; color: var(--muted); max-width: 65ch; }
+
+/* Stickers */
+.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+.st { background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius); padding: 14px 8px; text-align: center; display: grid; gap: 4px; }
+.st .e { font-size: 2.6rem; line-height: 1.1; }
+.st.locked .e { filter: grayscale(1) opacity(.25); }
+.st .s { font-size: .82rem; color: var(--muted); }
+
+#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 30; width: 100%; height: 100%; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+@media (max-width: 560px) { .textpanel { padding: 16px; } .sheet { padding: 18px; } }
+</style>
+</head><body>
+
+<div id="app">
+  <header class="topbar" id="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 4 14h5l-4 6h6v9h10v-9h6l-4-6h5Z" fill="var(--good)"/><rect x="13" y="20" width="6" height="9" rx="1" fill="var(--sun)"/></svg>
+      Typing Treehouse
+    </div>
+    <span class="chip" id="whochip" hidden><span class="av" id="whoav"></span><span id="whoname"></span></span>
+    <span class="chip tnum" id="starchip" hidden title="Stars earned">★ <span id="starcount">0</span></span>
+    <button class="iconbtn" id="soundbtn" aria-pressed="true">Sound: on</button>
+    <button class="iconbtn" id="switchbtn" hidden>Switch typist</button>
+  </header>
+
+  <main>
+    <!-- Who is typing -->
+    <section id="s-who" class="who">
+      <div class="who-hero">
+        <h1>Who's typing today?</h1>
+        <p class="muted">Pick your name to keep going, or add a new typist.</p>
+      </div>
+      <div class="profiles" id="profiles"></div>
+      <form class="addcard" id="addform" autocomplete="off">
+        <h3>Add a new typist</h3>
+        <label for="newname" class="label">Your name</label>
+        <input type="text" id="newname" maxlength="16" placeholder="Type your name">
+        <span class="label">Pick a buddy</span>
+        <div class="avpick" id="avpick"></div>
+        <div><button class="btn" type="submit" id="addbtn">Let's go!</button></div>
+      </form>
+    </section>
+
+    <!-- Lesson map -->
+    <section id="s-map" hidden>
+      <div class="maphead">
+        <div>
+          <h1 id="hello">Hi!</h1>
+          <p class="muted">Climb the tree one branch at a time. Earn 1 star to open the next lesson.</p>
+        </div>
+        <div class="goal">
+          <div style="display:flex;justify-content:space-between;gap:8px"><span class="label">Today's goal</span><span class="tnum" id="goaltxt"></span></div>
+          <div class="bar"><i id="goalbar" style="width:0%"></i></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn sun" id="gotogame">Balloon Pop game</button>
+        <button class="btn ghost" id="gotoprog">My progress</button>
+        <button class="btn ghost" id="gotostick">Sticker book</button>
+      </div>
+      <div class="lessons" id="lessons"></div>
+    </section>
+
+    <!-- Lesson -->
+    <section id="s-lesson" hidden>
+      <div class="lhead">
+        <button class="btn ghost small" id="lessonback">← Map</button>
+        <h2 id="ltitle">Lesson</h2>
+        <div class="stats">
+          <div class="stat"><div class="label">Speed</div><div class="v"><span id="wpm">0</span> <small class="muted" style="font-size:.8rem">wpm</small></div></div>
+          <div class="stat"><div class="label">Accuracy</div><div class="v"><span id="acc">100</span>%</div></div>
+          <div class="stat"><div class="label">Done</div><div class="v"><span id="pct">0</span>%</div></div>
+        </div>
+      </div>
+      <div class="desk">
+        <div class="textpanel" id="textpanel" aria-live="off">
+          <div class="intro" id="intro">
+            <div class="in">
+              <h2 id="introtitle">New keys</h2>
+              <div class="caps" id="introcaps"></div>
+              <p id="introtip"></p>
+              <p class="muted">Sit up tall, feet flat, eyes on the screen.</p>
+              <button class="btn" id="startbtn">Start (press Space)</button>
+            </div>
+          </div>
+          <div id="text"></div>
+        </div>
+        <div class="guide">
+          <div class="hands" id="hands"></div>
+          <div class="hint" id="hint"></div>
+        </div>
+        <div class="kbwrap"><div class="kb" id="kb"></div></div>
+      </div>
+    </section>
+
+    <!-- Game -->
+    <section id="s-game" hidden>
+      <div class="lhead">
+        <button class="btn ghost small" id="gameback">← Map</button>
+        <h2>Balloon Pop</h2>
+        <div class="stats">
+          <div class="stat"><div class="label">Score</div><div class="v" id="gscore">0</div></div>
+          <div class="stat"><div class="label">Best</div><div class="v" id="gbest">0</div></div>
+          <div class="stat"><div class="label">Hearts</div><div class="v hearts" id="ghearts">♥♥♥</div></div>
+        </div>
+      </div>
+      <div class="gamebox" id="gamebox">
+        <canvas id="gcanvas"></canvas>
+        <div class="intro" id="gintro">
+          <div class="in">
+            <h2 id="gintrotitle">Pop the balloons!</h2>
+            <p id="gintrotext">Type the letter on a balloon to pop it before it floats away. You only get letters you have already learned.</p>
+            <div class="caps" id="gletters"></div>
+            <button class="btn sun" id="gstart">Play (press Space)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Progress -->
+    <section id="s-progress" hidden>
+      <div class="lhead">
+        <button class="btn ghost small" id="progback">← Map</button>
+        <h2 id="progtitle">My progress</h2>
+      </div>
+      <div class="cards4" id="progcards"></div>
+      <div class="week">
+        <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="label">Minutes typed, last 7 days</span><span class="muted" style="font-size:.85rem">Green = 10-minute goal met</span></div>
+        <div class="weekbars" id="weekbars"></div>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>#</th><th>Lesson</th><th>Stars</th><th class="n">Best speed</th><th class="n">Best accuracy</th><th class="n">Times played</th></tr></thead>
+          <tbody id="progtable"></tbody>
+        </table>
+      </div>
+      <p class="note">Progress is saved in this browser on this Chromebook. If you clear browsing data or use a different computer, progress starts over.</p>
+      <p class="note"><button class="btn ghost small" id="delbtn">Remove this typist</button></p>
+    </section>
+
+    <!-- Stickers -->
+    <section id="s-stickers" hidden>
+      <div class="lhead">
+        <button class="btn ghost small" id="stickback">← Map</button>
+        <h2>Sticker book</h2>
+        <span class="chip tnum" id="stickcount"></span>
+      </div>
+      <div class="shelf" id="shelf"></div>
+    </section>
+  </main>
+
+  <div class="modal" id="modal" hidden>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+  </div>
+</div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Data ----------
+  const LESSONS = [
+    { id: "fj", title: "F and J", keys: "fj", tip: "Feel the little bumps on F and J? Your pointer fingers always come home to them." },
+    { id: "dk", title: "D and K", keys: "dk", tip: "Middle fingers rest on D and K, right next to your pointers." },
+    { id: "sl", title: "S and L", keys: "sl", tip: "Ring fingers rest on S and L." },
+    { id: "a;", title: "A and ;", keys: "a;", tip: "Pinkies rest on A and ;. Now all eight fingers are home!" },
+    { id: "home", title: "Home Row Hero", keys: "", review: "asdfjkl;", tip: "Mix up every home row key. Thumbs tap the space bar." },
+    { id: "gh", title: "G and H", keys: "gh", tip: "Pointer fingers reach one step to the middle for G and H." },
+    { id: "ei", title: "E and I", keys: "ei", tip: "Middle fingers reach up for E and I, then hop back home." },
+    { id: "ru", title: "R and U", keys: "ru", tip: "Pointer fingers reach up for R and U." },
+    { id: "ty", title: "T and Y", keys: "ty", tip: "Pointer fingers stretch up and in for T and Y." },
+    { id: "wo", title: "W and O", keys: "wo", tip: "Ring fingers reach up for W and O." },
+    { id: "qp", title: "Q and P", keys: "qp", tip: "Pinkies reach up for Q and P." },
+    { id: "c,", title: "C and Comma", keys: "c,", tip: "Middle fingers reach down for C and the comma." },
+    { id: "vm", title: "V and M", keys: "vm", tip: "Pointer fingers reach down for V and M." },
+    { id: "bn", title: "B and N", keys: "bn", tip: "Pointer fingers reach down and in for B and N." },
+    { id: "x.", title: "X and Period", keys: "x.", tip: "Ring fingers reach down for X and the period." },
+    { id: "z", title: "Z", keys: "z", tip: "Left pinky reaches down for Z. That's every letter!" },
+    { id: "shift", title: "Capital Letters", keys: "", type: "shift", tip: "Hold Shift with the pinky on the OTHER hand, then press the letter." },
+    { id: "sent", title: "Super Sentences", keys: "", type: "sentences", tip: "Type real sentences with capitals and periods. You've got this!" }
+  ];
+  LESSONS.forEach((l, i) => { l.target = Math.min(15, 6 + Math.floor(i / 2)); });
+
+  const WORDS = Array.from(new Set((
+    "a ad add all as ask dad fad fall flask hall lad lass sad salad alas sash ash dash has had half glad flag gas jag lag hash " +
+    "he she the her his him hid hide hike side tide ride slide like lake take make bake cake shake fake gate late kite bite fit hit sit kit " +
+    "red fed led sled shed bed set get let jet wet net pet met yet egg leg beg sea see tree free feet seed need keep deep sheep jeep " +
+    "is it if in his this dig fig jig pig big wig rug hug bug mug jug dug tug fun sun run bun nut hut cut but " +
+    "toy boy joy you your our out four hour house mouse yes yell year yard yak yarn try fry dry sky fly my by " +
+    "we web well west wow owl owe own two who was what when where quit quiz queen quick quack " +
+    "pup pop pet pink park play plum pool cat cap cup cow can corn cool van vet vest very move love dove five give have " +
+    "man map mom me milk moon mud mess bat bee big bus box bear bird book ball best not nap nest nine nose new now name nice " +
+    "fox six mix wax ox zoo zip zap zero zebra lazy fizz buzz jazz prize dog log frog jog hog fog rain train paint snail tail mail sail " +
+    "fish dish wish jam jar jelly juice jump just job old cold gold hold fold sold told sleep jade fled sled ski lid kid kids skid " +
+    "egg eel elk else desk ideas file life lift gift hill fill kill silk lie die tie fire hire tire rule true rest dust rush " +
+    "tray stay day say way may hay pay ray gray tiger story water sweet tower power flower hello happy puppy pizza apple"
+  ).split(/\s+/).filter(Boolean)));
+
+  const NAMES = ["Sam", "Max", "Ava", "Mia", "Leo", "Zoe", "Ben", "Ivy", "Jack", "Lily", "Emma", "Noah", "Kai", "Ruby", "Owen", "Nora"];
+  const SENTENCES = [
+    "The cat naps in the sun.", "My dog likes to run fast.", "We had pizza for lunch.", "Frogs can jump very high.",
+    "I can type with ten fingers.", "The moon is big and bright.", "Look at that red kite fly.", "Ducks swim in the pond.",
+    "Pandas love to eat bamboo.", "Can you hop like a bunny?", "My best friend is kind.", "The bus is big and yellow.",
+    "Bees make sweet honey.", "I like to read at night.", "Fish swim in the sea.", "We play tag at the park."
+  ];
+  const AVATARS = ["🦊", "🐼", "🐯", "🦄", "🐸", "🐙", "🐨", "🦉", "🐢", "🐬", "🦋", "🐝"];
+  const STICKERS = [
+    { at: 1, e: "🌱", n: "First Sprout" }, { at: 3, e: "🐞", n: "Lucky Ladybug" }, { at: 6, e: "🍓", n: "Berry Good" },
+    { at: 10, e: "🌈", n: "Rainbow" }, { at: 15, e: "🚀", n: "Rocket" }, { at: 20, e: "🐉", n: "Dragon" },
+    { at: 25, e: "🎸", n: "Rock Star" }, { at: 30, e: "🏰", n: "Castle" }, { at: 36, e: "🦖", n: "Dino" },
+    { at: 42, e: "🌋", n: "Volcano" }, { at: 48, e: "🏆", n: "Trophy" }, { at: 54, e: "👑", n: "Typing Royalty" }
+  ];
+  const GOAL_SECS = 10 * 60;
+
+  // Finger map
+  const FINGERS = {
+    lp: "left pinky", lr: "left ring finger", lm: "left middle finger", li: "left pointer finger",
+    ri: "right pointer finger", rm: "right middle finger", rr: "right ring finger", rp: "right pinky", th: "thumb"
+  };
+  const FMAP = {};
+  [["`1qaz", "lp"], ["2wsx", "lr"], ["3edc", "lm"], ["45rtfgvb", "li"], ["67yuhjnm", "ri"], ["8ik,", "rm"], ["9ol.", "rr"], ["0-=p[];'/\\", "rp"], [" ", "th"]]
+    .forEach(([ks, f]) => { for (const k of ks) FMAP[k] = f; });
+  const SHIFTED = { "?": "/", ":": ";", "!": "1", '"': "'", "<": ",", ">": "." };
+  function baseKey(ch) {
+    if (SHIFTED[ch]) return { key: SHIFTED[ch], shift: true };
+    if (ch >= "A" && ch <= "Z") return { key: ch.toLowerCase(), shift: true };
+    return { key: ch, shift: false };
+  }
+
+  // ---------- Storage ----------
+  const KEY = "typingTreehouse.v1";
+  let data = { profiles: {}, current: null, sound: true };
+  try { const raw = localStorage.getItem(KEY); if (raw) data = Object.assign(data, JSON.parse(raw)); } catch (e) { /* storage blocked; run in memory */ }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) { /* ignore */ } }
+  const P = () => data.profiles[data.current] || null;
+
+  function dayKey(d) {
+    d = d || new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function addSecs(s) { const p = P(); if (!p || s <= 0) return; const k = dayKey(); p.days[k] = (p.days[k] || 0) + s; }
+  function totalStars(p) { p = p || P(); if (!p) return 0; return Object.values(p.lessons).reduce((a, l) => a + (l.stars || 0), 0); }
+  function streak(p) {
+    let n = 0; const d = new Date();
+    if ((p.days[dayKey(d)] || 0) < 60) d.setDate(d.getDate() - 1);
+    while ((p.days[dayKey(d)] || 0) >= 60) { n++; d.setDate(d.getDate() - 1); }
+    return n;
+  }
+  function unlocked(i) { const p = P(); return i === 0 || ((p.lessons[LESSONS[i - 1].id] || {}).stars || 0) >= 1; }
+  function allowedFor(i) {
+    const s = new Set([" "]);
+    for (let j = 0; j <= i; j++) for (const c of (LESSONS[j].keys || LESSONS[j].review || "")) s.add(c);
+    return s;
+  }
+
+  // ---------- Sound ----------
+  let actx = null;
+  function tone(freq, dur, type, vol, when) {
+    if (!data.sound) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      const t = actx.currentTime + (when || 0);
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type || "sine"; o.frequency.setValueAtTime(freq, t);
+      g.gain.setValueAtTime(vol || 0.06, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur + 0.02);
+    } catch (e) { /* no audio */ }
+  }
+  const sfx = {
+    tick: () => tone(880, 0.05, "triangle", 0.035),
+    err: () => tone(160, 0.14, "square", 0.025),
+    pop: () => { tone(620, 0.08, "sine", 0.09); tone(940, 0.07, "sine", 0.06, 0.04); },
+    win: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.18, "triangle", 0.07, i * 0.11)),
+    lose: () => [392, 330, 262].forEach((f, i) => tone(f, 0.2, "triangle", 0.06, i * 0.14))
+  };
+
+  // ---------- DOM helpers ----------
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const starStr = (n) => "<b>" + "★".repeat(n) + "</b>" + "★".repeat(3 - n);
+  const capLabel = (c) => c === " " ? "space" : c;
+  const fcolor = (f) => "var(--f-" + f + ")";
+
+  let screen = "who";
+  function show(name) {
+    screen = name;
+    ["who", "map", "lesson", "game", "progress", "stickers"].forEach((s) => { const el = $("s-" + s); if (el) el.hidden = s !== name; });
+    const p = P();
+    $("whochip").hidden = !p || name === "who";
+    $("starchip").hidden = !p || name === "who";
+    $("switchbtn").hidden = !p || name === "who";
+    if (p) { $("whoav").textContent = p.avatar; $("whoname").textContent = p.name; $("starcount").textContent = totalStars(); }
+    if (name !== "game") stopGame(false);
+    window.scrollTo(0, 0);
+  }
+
+  // ---------- Who's typing ----------
+  let pickedAvatar = AVATARS[0];
+  function renderWho() {
+    const box = $("profiles");
+    const ids = Object.keys(data.profiles);
+    box.innerHTML = ids.map((id) => {
+      const p = data.profiles[id];
+      return '<button class="profile" data-id="' + id + '"><span class="big">' + p.avatar + '</span><span class="nm">' + esc(p.name) +
+        '</span><span class="muted tnum">★ ' + totalStars(p) + " stars</span></button>";
+    }).join("");
+    box.hidden = ids.length === 0;
+    box.querySelectorAll(".profile").forEach((b) => b.addEventListener("click", () => { data.current = b.dataset.id; save(); openMap(); }));
+    $("avpick").innerHTML = AVATARS.map((a) => '<button type="button" aria-pressed="' + (a === pickedAvatar) + '" aria-label="Buddy ' + a + '">' + a + "</button>").join("");
+    $("avpick").querySelectorAll("button").forEach((b, i) => b.addEventListener("click", () => { pickedAvatar = AVATARS[i]; renderWho(); }));
+  }
+  $("addform").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = $("newname").value.trim();
+    if (!name) { $("newname").focus(); $("newname").placeholder = "Type a name first"; return; }
+    const id = "p" + Date.now();
+    data.profiles[id] = { name, avatar: pickedAvatar, lessons: {}, days: {}, gameBest: 0, stickers: [] };
+    data.current = id; save(); $("newname").value = ""; openMap();
+  });
+
+  // ---------- Map ----------
+  function openMap() {
+    const p = P(); if (!p) { renderWho(); show("who"); return; }
+    $("hello").textContent = "Hi, " + p.name + "!";
+    const secs = p.days[dayKey()] || 0;
+    $("goaltxt").textContent = Math.floor(secs / 60) + " of 10 min";
+    $("goalbar").style.width = Math.min(100, (secs / GOAL_SECS) * 100) + "%";
+    let nextIdx = LESSONS.findIndex((l, i) => unlocked(i) && !((p.lessons[l.id] || {}).stars >= 1));
+    $("lessons").innerHTML = LESSONS.map((l, i) => {
+      const rec = p.lessons[l.id] || {};
+      const open = unlocked(i);
+      const keys = l.type === "shift" ? ["⇧", "A"] : l.type === "sentences" ? ["Aa", "."] : (l.keys || l.review).split("");
+      const tag = !open ? '<span class="tag lock">Locked</span>' : i === nextIdx ? '<span class="tag">Up next</span>' : "";
+      return '<button class="lcard' + (i === nextIdx ? " next" : "") + '" data-i="' + i + '"' + (open ? "" : " disabled") + ">" + tag +
+        '<span class="num">Lesson ' + (i + 1) + '</span><span class="ttl">' + esc(l.title) + '</span><span class="caps">' +
+        keys.map((k) => '<span class="cap">' + esc(k) + "</span>").join("") + '</span><span class="stars" aria-label="' + (rec.stars || 0) + ' of 3 stars">' +
+        starStr(rec.stars || 0) + "</span></button>";
+    }).join("");
+    $("lessons").querySelectorAll(".lcard").forEach((b) => b.addEventListener("click", () => startLesson(+b.dataset.i)));
+    show("map");
+  }
+
+  // ---------- Text building ----------
+  const rnd = (a) => a[Math.floor(Math.random() * a.length)];
+  function combo(letters, len) { let s = ""; for (let i = 0; i < len; i++) s += rnd(letters); return s; }
+  function buildText(i) {
+    const l = LESSONS[i];
+    if (l.type === "sentences") {
+      const pool = SENTENCES.slice().sort(() => Math.random() - 0.5);
+      return pool.slice(0, 3).join(" ");
+    }
+    const allowed = allowedFor(i);
+    const words = WORDS.filter((w) => [...w].every((c) => allowed.has(c)));
+    if (l.type === "shift") {
+      const out = [];
+      for (let n = 0; n < 10; n++) out.push(n % 2 ? rnd(NAMES) : (() => { const w = rnd(words); return w[0].toUpperCase() + w.slice(1); })());
+      return out.join(" ");
+    }
+    const newKeys = (l.keys || l.review).split("");
+    const letters = [...allowed].filter((c) => c !== " ");
+    const groups = [];
+    if (l.keys) {
+      newKeys.forEach((k) => groups.push(k.repeat(3)));
+      if (newKeys.length > 1) groups.push(newKeys[0] + newKeys[1] + newKeys[0], newKeys[1] + newKeys[0] + newKeys[1]);
+    }
+    const withNew = words.filter((w) => newKeys.some((c) => w.includes(c)));
+    const punct = newKeys.filter((c) => ",.".includes(c));
+    const target = l.review ? 13 : 9;
+    for (let n = 0; n < target; n++) {
+      let g;
+      if (words.length >= 6) {
+        g = withNew.length >= 3 && Math.random() < 0.7 ? rnd(withNew) : rnd(words);
+        if (punct.length && n % 2 === 1) g += rnd(punct);
+        if (newKeys.includes(";") && n % 3 === 2) g = combo(newKeys, 2) + ";";
+      } else {
+        g = Math.random() < 0.6 ? combo(newKeys.concat(newKeys, letters), 3) : combo(letters, 2 + Math.floor(Math.random() * 3));
+      }
+      groups.push(g);
+    }
+    return groups.join(" ");
+  }
+
+  // ---------- Keyboard + hands ----------
+  const ROWS = [
+    [["`"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"], ["0"], ["-"], ["="], ["back", "w2", "mod"]],
+    [["tab", "w15", "mod"], ["q"], ["w"], ["e"], ["r"], ["t"], ["y"], ["u"], ["i"], ["o"], ["p"], ["["], ["]"], ["\\", "w15"]],
+    [["search", "w18", "mod"], ["a"], ["s"], ["d"], ["f", "bump"], ["g"], ["h"], ["j", "bump"], ["k"], ["l"], [";"], ["'"], ["enter", "w2", "mod"]],
+    [["ShiftL", "w25", "mod", "shift"], ["z"], ["x"], ["c"], ["v"], ["b"], ["n"], ["m"], [","], ["."], ["/"], ["ShiftR", "w25", "mod", "shift"]],
+    [["ctrl", "w15", "mod"], ["alt", "w15", "mod"], [" ", "space"], ["alt", "w15", "mod"], ["ctrl", "w15", "mod"]]
+  ];
+  function buildKeyboard() {
+    $("kb").innerHTML = ROWS.map((row) => '<div class="kr">' + row.map(([k, ...cls]) => {
+      let f = FMAP[k];
+      if (k === "ShiftL") f = "lp"; if (k === "ShiftR") f = "rp";
+      const label = k === "ShiftL" || k === "ShiftR" ? "shift" : k === " " ? "" : k;
+      const isMod = cls.includes("mod");
+      return '<div class="k ' + cls.join(" ") + '" data-k="' + esc(k) + '"' + (f && !(isMod && !cls.includes("shift")) ? ' style="--fc:' + fcolor(f) + '"' : "") + ">" + esc(label) + "</div>";
+    }).join("") + "</div>").join("");
+  }
+  function buildHands() {
+    // Two hands, palms down: pinky..thumb on left, thumb..pinky on right.
+    const L = [["lp", 20, 52, 66], ["lr", 52, 30, 82], ["lm", 86, 20, 92], ["li", 120, 30, 82]];
+    const R = [["ri", 284, 30, 82], ["rm", 318, 20, 92], ["rr", 352, 30, 82], ["rp", 386, 52, 66]];
+    let s = '<svg viewBox="0 0 440 190" role="img" aria-label="Hands showing which finger to use">';
+    s += '<rect class="palm" x="18" y="104" width="134" height="76" rx="30"/><rect class="palm" x="288" y="104" width="134" height="76" rx="30"/>';
+    L.concat(R).forEach(([id, x, y, h]) => { s += '<rect class="fg" data-f="' + id + '" x="' + x + '" y="' + y + '" width="30" height="' + h + '" rx="15"/>'; });
+    s += '<rect class="fg" data-f="th" x="150" y="112" width="30" height="64" rx="15" transform="rotate(-38 165 144)"/>';
+    s += '<rect class="fg" data-f="th" x="260" y="112" width="30" height="64" rx="15" transform="rotate(38 275 144)"/>';
+    s += '<text x="85" y="150" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="16" fill="var(--muted)">Left</text>';
+    s += '<text x="355" y="150" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="16" fill="var(--muted)">Right</text></svg>';
+    $("hands").innerHTML = s;
+  }
+  function highlight(ch) {
+    document.querySelectorAll(".k.on").forEach((k) => k.classList.remove("on"));
+    document.querySelectorAll(".hands .fg").forEach((f) => { f.style.fill = ""; });
+    if (ch == null) { $("hint").innerHTML = ""; return; }
+    const { key, shift } = baseKey(ch);
+    const f = FMAP[key] || "th";
+    const keyEl = document.querySelector('.k[data-k="' + CSS.escape(key) + '"]');
+    if (keyEl) keyEl.classList.add("on");
+    const lit = [f];
+    let msg = "Use your <span>" + FINGERS[f] + "</span>" + (key === " " ? " on the space bar" : " for <b>" + esc(capLabel(ch)) + "</b>");
+    if (shift) {
+      const sf = f[0] === "l" ? "rp" : "lp";
+      const sk = document.querySelector('.k[data-k="' + (sf === "rp" ? "ShiftR" : "ShiftL") + '"]');
+      if (sk) sk.classList.add("on");
+      lit.push(sf);
+      msg = "Hold <span>Shift</span> with your " + FINGERS[sf] + ", then " + FINGERS[f] + " for <b>" + esc(ch) + "</b>";
+    }
+    lit.forEach((id) => document.querySelectorAll('.hands .fg[data-f="' + id + '"]').forEach((el) => { el.style.fill = fcolor(id); }));
+    $("hint").innerHTML = '<i class="dot" style="background:' + fcolor(f) + '"></i><span>' + msg + "</span>";
+  }
+  function flashKey(ch) {
+    const { key } = baseKey(ch);
+    const el = document.querySelector('.k[data-k="' + CSS.escape(key) + '"]');
+    if (!el) return;
+    el.classList.add("press"); setTimeout(() => el.classList.remove("press"), 90);
+  }
+
+  // ---------- Lesson engine ----------
+  let L = null; // current lesson state
+  function startLesson(i) {
+    const l = LESSONS[i];
+    const text = buildText(i);
+    L = { i, text, pos: 0, errors: 0, errAt: new Set(), start: 0, last: 0, active: 0, started: false, done: false };
+    $("ltitle").textContent = "Lesson " + (i + 1) + ": " + l.title;
+    // Lines break only at spaces: each word sits in a nowrap span.
+    const parts = text.split(" ");
+    let n = 0, html = "";
+    parts.forEach((w, wi) => {
+      html += '<span style="white-space:nowrap">';
+      for (const c of w) { html += '<span class="c" data-n="' + n + '">' + esc(c) + "</span>"; n++; }
+      if (wi < parts.length - 1) { html += '<span class="c sp" data-n="' + n + '">&nbsp;</span>'; n++; }
+      html += "</span> ";
+    });
+    $("text").innerHTML = html;
+    L.spans = $("text").querySelectorAll(".c");
+    const introKeys = l.type === "shift" ? ["shift", "A", "B"] : l.type === "sentences" ? ["A", ".", "?"] : (l.keys || l.review).split("");
+    $("introtitle").textContent = l.keys ? "New keys!" : l.title;
+    $("introcaps").innerHTML = introKeys.map((k) => {
+      const f = FMAP[k.toLowerCase()];
+      return '<span class="cap" style="' + (f ? "border-bottom-color:" + fcolor(f) : "") + '">' + esc(k) + "</span>";
+    }).join("");
+    $("introtip").textContent = l.tip + " Goal: " + l.target + " words per minute with no peeking!";
+    $("intro").hidden = false;
+    updateStats();
+    highlight(null);
+    show("lesson");
+  }
+  function beginTyping() {
+    if (!L || L.started) return;
+    L.started = true; $("intro").hidden = true;
+    renderCursor(); highlight(L.text[0]);
+    if (innerHeight < 800) $("textpanel").scrollIntoView({ block: "start", behavior: "smooth" });
+  }
+  function renderCursor() {
+    L.spans.forEach((s) => s.classList.remove("cur"));
+    if (L.pos < L.spans.length) L.spans[L.pos].classList.add("cur");
+  }
+  function calc() {
+    const mins = L.start ? Math.max((L.last - L.start) / 60000, 0.05) : 0;
+    const wpm = mins ? Math.round((L.pos / 5) / mins) : 0;
+    const acc = L.pos + L.errors ? Math.round((L.pos / (L.pos + L.errors)) * 100) : 100;
+    return { wpm, acc };
+  }
+  function updateStats() {
+    if (!L) return;
+    const { wpm, acc } = calc();
+    $("wpm").textContent = wpm; $("acc").textContent = acc;
+    $("pct").textContent = Math.round((L.pos / L.text.length) * 100);
+  }
+  function lessonKey(key) {
+    if (!L.started) { if (key === " " || key === "Enter") beginTyping(); return; }
+    if (L.done || key.length !== 1) return;
+    const now = performance.now();
+    if (!L.start) { L.start = now; L.last = now; }
+    L.active += Math.min((now - L.last) / 1000, 5);
+    L.last = now;
+    const expected = L.text[L.pos];
+    const span = L.spans[L.pos];
+    if (key === expected) {
+      span.classList.remove("bad");
+      span.classList.add(L.errAt.has(L.pos) ? "fixed" : "done");
+      L.pos++; sfx.tick(); flashKey(key);
+      if (L.pos >= L.text.length) { finishLesson(); return; }
+      renderCursor(); highlight(L.text[L.pos]);
+    } else {
+      L.errors++; L.errAt.add(L.pos); sfx.err();
+      span.classList.remove("bad"); void span.offsetWidth; span.classList.add("bad");
+    }
+    updateStats();
+  }
+  function finishLesson() {
+    L.done = true; renderCursor(); highlight(null); updateStats();
+    const l = LESSONS[L.i];
+    const { wpm, acc } = calc();
+    let stars = acc >= 95 && wpm >= l.target ? 3 : acc >= 90 ? 2 : acc >= 80 ? 1 : 0;
+    const p = P();
+    const before = totalStars();
+    const rec = p.lessons[l.id] || { stars: 0, bestWpm: 0, bestAcc: 0, plays: 0 };
+    rec.plays++; rec.stars = Math.max(rec.stars, stars);
+    rec.bestWpm = Math.max(rec.bestWpm, wpm); rec.bestAcc = Math.max(rec.bestAcc, acc);
+    p.lessons[l.id] = rec;
+    addSecs(Math.round(L.active));
+    const after = totalStars();
+    const newSt = STICKERS.filter((s) => s.at > before && s.at <= after);
+    save();
+    $("starcount").textContent = after;
+
+    let msg;
+    if (stars === 3) msg = "Superstar typing!";
+    else if (stars === 2) msg = acc < 95 ? "Great job! Slow down a tiny bit to make fewer oopsies and get 3 stars." : "Great job! Type " + l.target + " words per minute to get 3 stars.";
+    else if (stars === 1) msg = "Nice work! You opened the next lesson.";
+    else msg = "Almost! Go slowly and press the right keys. 80% accuracy opens the next lesson.";
+    const hasNext = L.i + 1 < LESSONS.length && unlocked(L.i + 1);
+    openModal(
+      "<h2>" + (stars ? "Lesson done!" : "Keep practicing!") + "</h2>" +
+      '<div class="bigstars" aria-label="' + stars + ' of 3 stars">' + starStr(stars) + "</div>" +
+      "<p>" + esc(msg) + "</p>" +
+      '<div class="resgrid"><div class="stat"><div class="label">Speed</div><div class="v">' + wpm + ' wpm</div></div><div class="stat"><div class="label">Accuracy</div><div class="v">' + acc + "%</div></div></div>" +
+      newSt.map((s) => '<div class="newsticker"><span>' + s.e + "</span>New sticker: " + esc(s.n) + "!</div>").join("") +
+      '<div class="row"><button class="btn ghost" data-act="again">Try again</button>' +
+      (hasNext ? '<button class="btn" data-act="next">Next lesson →</button>' : '<button class="btn" data-act="map">Back to map</button>') + "</div>" +
+      '<p class="muted" style="font-size:.85rem">Press Enter for ' + (hasNext ? "the next lesson" : "the map") + "</p>",
+      { again: () => startLesson(L.i), next: () => startLesson(L.i + 1), map: openMap, enter: hasNext ? () => startLesson(L.i + 1) : openMap }
+    );
+    if (stars >= 1) { sfx.win(); confetti(stars * 50); } else sfx.lose();
+  }
+
+  // ---------- Modal ----------
+  let modalActs = null;
+  function openModal(html, acts) {
+    $("sheet").innerHTML = html; modalActs = acts; $("modal").hidden = false;
+    $("sheet").querySelectorAll("[data-act]").forEach((b) => b.addEventListener("click", () => { const f = acts[b.dataset.act]; closeModal(); f && f(); }));
+    const first = $("sheet").querySelector(".btn:last-of-type"); if (first) first.focus();
+  }
+  function closeModal() { $("modal").hidden = true; modalActs = null; }
+
+  // ---------- Balloon game ----------
+  const G = { running: false, raf: 0, balloons: [], bits: [], score: 0, hearts: 3, letters: [], spawnT: 0, every: 1700, speed: 38, last: 0, active: 0, lastKey: 0 };
+  function gameLetters() {
+    const p = P();
+    let hi = 0; LESSONS.forEach((l, i) => { if (unlocked(i)) hi = i; });
+    let ls = [...allowedFor(Math.min(hi, 15))].filter((c) => c >= "a" && c <= "z");
+    if (ls.length < 6) ls = "asdfjkl".split("");
+    return ls;
+  }
+  function openGame() {
+    const p = P();
+    G.letters = gameLetters();
+    $("gbest").textContent = p.gameBest || 0; $("gscore").textContent = 0; $("ghearts").textContent = "♥♥♥";
+    $("gintrotitle").textContent = "Pop the balloons!";
+    $("gintrotext").textContent = "Type the letter on a balloon to pop it before it floats away. You only get letters you have already learned.";
+    $("gletters").innerHTML = G.letters.map((c) => '<span class="cap">' + c + "</span>").join("");
+    $("gintro").hidden = false;
+    show("game");
+    sizeCanvas(); drawGame();
+  }
+  const gc = $("gcanvas"), gx = gc.getContext("2d");
+  function sizeCanvas() {
+    const dpr = window.devicePixelRatio || 1; const w = gc.clientWidth || 600, h = gc.clientHeight || 440;
+    gc.width = w * dpr; gc.height = h * dpr; gx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function startGame() {
+    $("gintro").hidden = true;
+    Object.assign(G, { running: true, balloons: [], bits: [], score: 0, hearts: 3, spawnT: 0, every: 1700, speed: 38, last: performance.now(), active: 0, lastKey: performance.now() });
+    G.palette = ["--f-lp", "--f-lr", "--f-lm", "--f-li", "--f-ri", "--f-rm", "--f-rr", "--f-rp"].map(cssVar);
+    G.ink = cssVar("--on-color"); G.line = cssVar("--muted");
+    $("gscore").textContent = 0; $("ghearts").textContent = "♥♥♥";
+    cancelAnimationFrame(G.raf); G.raf = requestAnimationFrame(loop);
+  }
+  function stopGame(over) {
+    if (!G.running) return;
+    G.running = false; cancelAnimationFrame(G.raf);
+    addSecs(Math.round(G.active));
+    const p = P();
+    if (p && G.score > (p.gameBest || 0)) p.gameBest = G.score;
+    save();
+    if (over) {
+      sfx.lose();
+      $("gbest").textContent = p.gameBest || 0;
+      $("gintrotitle").textContent = "Game over! You popped " + G.score + (G.score === 1 ? " balloon." : " balloons.");
+      $("gintrotext").textContent = G.score && G.score === p.gameBest ? "That's a new best score!" : "Best score: " + (p.gameBest || 0) + ". Keep your fingers on the home row and try again.";
+      $("gintro").hidden = false;
+      if (G.score && G.score === p.gameBest) confetti(120);
+    }
+  }
+  function loop(t) {
+    const dt = Math.min((t - G.last) / 1000, 0.05); G.last = t;
+    if (t - G.lastKey < 6000) G.active += dt;
+    const W = gc.clientWidth, H = gc.clientHeight;
+    G.spawnT -= dt * 1000;
+    if (G.spawnT <= 0) {
+      G.balloons.push({ ch: rnd(G.letters), x: 40 + Math.random() * (W - 80), y: H + 40, r: 30, ph: Math.random() * 6, col: rnd(G.palette) });
+      G.spawnT = G.every;
+    }
+    G.balloons.forEach((b) => { b.y -= G.speed * dt; b.ph += dt * 2; });
+    const gone = G.balloons.filter((b) => b.y < -b.r);
+    if (gone.length) {
+      G.hearts -= gone.length; sfx.err();
+      G.balloons = G.balloons.filter((b) => b.y >= -b.r);
+      $("ghearts").textContent = "♥".repeat(Math.max(G.hearts, 0)) + "♡".repeat(3 - Math.max(G.hearts, 0));
+      if (G.hearts <= 0) { drawGame(); stopGame(true); return; }
+    }
+    G.bits.forEach((p) => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 300 * dt; p.life -= dt; });
+    G.bits = G.bits.filter((p) => p.life > 0);
+    drawGame();
+    G.raf = requestAnimationFrame(loop);
+  }
+  function drawGame() {
+    const W = gc.clientWidth, H = gc.clientHeight;
+    gx.clearRect(0, 0, W, H);
+    gx.fillStyle = cssVar("--coral"); gx.globalAlpha = 0.25; gx.fillRect(0, 0, W, 6); gx.globalAlpha = 1;
+    G.balloons.forEach((b) => {
+      const x = b.x + Math.sin(b.ph) * 6;
+      gx.strokeStyle = G.line || "#888"; gx.lineWidth = 1.5;
+      gx.beginPath(); gx.moveTo(x, b.y + b.r * 1.15); gx.quadraticCurveTo(x - 8, b.y + b.r * 1.7, x, b.y + b.r * 2.4); gx.stroke();
+      gx.fillStyle = b.col || "#7cc";
+      gx.beginPath(); gx.ellipse(x, b.y, b.r, b.r * 1.15, 0, 0, Math.PI * 2); gx.fill();
+      gx.beginPath(); gx.moveTo(x - 5, b.y + b.r * 1.12); gx.lineTo(x + 5, b.y + b.r * 1.12); gx.lineTo(x, b.y + b.r * 1.02); gx.fill();
+      gx.fillStyle = "rgba(255,255,255,.45)"; gx.beginPath(); gx.ellipse(x - b.r * 0.4, b.y - b.r * 0.45, 6, 10, -0.5, 0, Math.PI * 2); gx.fill();
+      gx.fillStyle = G.ink || "#123"; gx.font = '600 28px "Atkinson Hyperlegible Mono", ui-monospace, monospace';
+      gx.textAlign = "center"; gx.textBaseline = "middle"; gx.fillText(b.ch, x, b.y + 1);
+    });
+    G.bits.forEach((p) => { gx.globalAlpha = Math.max(p.life * 2, 0); gx.fillStyle = p.col; gx.fillRect(p.x, p.y, 6, 6); });
+    gx.globalAlpha = 1;
+  }
+  function gameKey(key) {
+    if (!G.running) { if (key === " " || key === "Enter") startGame(); return; }
+    if (key.length !== 1) return;
+    G.lastKey = performance.now();
+    const k = key.toLowerCase();
+    const hits = G.balloons.filter((b) => b.ch === k).sort((a, b) => a.y - b.y);
+    if (!hits.length) { sfx.err(); return; }
+    const b = hits[0];
+    G.balloons.splice(G.balloons.indexOf(b), 1);
+    for (let n = 0; n < 14; n++) G.bits.push({ x: b.x, y: b.y, vx: (Math.random() - 0.5) * 260, vy: (Math.random() - 0.8) * 260, life: 0.6, col: b.col });
+    G.score++; sfx.pop();
+    $("gscore").textContent = G.score;
+    if (G.score % 5 === 0) { G.speed = Math.min(G.speed + 5, 115); G.every = Math.max(G.every - 110, 650); }
+  }
+
+  // ---------- Progress ----------
+  function openProgress() {
+    const p = P();
+    $("progtitle").textContent = p.name + "'s progress";
+    const today = p.days[dayKey()] || 0;
+    const best = Math.max(0, ...Object.values(p.lessons).map((l) => l.bestWpm || 0));
+    const totalMin = Math.round(Object.values(p.days).reduce((a, b) => a + b, 0) / 60);
+    const cards = [
+      ["Today", Math.floor(today / 60) + " min", "Goal: 10 minutes a day"],
+      ["Streak", streak(p) + (streak(p) === 1 ? " day" : " days"), "Days in a row with practice"],
+      ["Stars", totalStars(p) + " / " + LESSONS.length * 3, LESSONS.filter((l, i) => (p.lessons[l.id] || {}).stars >= 1).length + " lessons passed"],
+      ["Best speed", best + " wpm", totalMin + " minutes typed in all"]
+    ];
+    $("progcards").innerHTML = cards.map(([a, b, c]) => '<div class="card"><span class="label">' + a + '</span><span class="v">' + b + '</span><span class="muted" style="font-size:.85rem">' + c + "</span></div>").join("");
+    const days = [];
+    for (let n = 6; n >= 0; n--) { const d = new Date(); d.setDate(d.getDate() - n); days.push(d); }
+    const vals = days.map((d) => (p.days[dayKey(d)] || 0) / 60);
+    const max = Math.max(10, ...vals);
+    $("weekbars").innerHTML = days.map((d, i) => {
+      const v = vals[i];
+      return '<div class="wb"><span>' + Math.round(v) + '</span><div class="col' + (v >= 10 ? " met" : "") + '" style="height:' + Math.max((v / max) * 100, 1.5) + '%"></div><span class="d">' +
+        (i === 6 ? "Today" : d.toLocaleDateString(undefined, { weekday: "short" })) + "</span></div>";
+    }).join("");
+    $("progtable").innerHTML = LESSONS.map((l, i) => {
+      const r = p.lessons[l.id];
+      return "<tr><td class='tnum'>" + (i + 1) + "</td><td>" + esc(l.title) + '</td><td><span class="stars">' + starStr(r ? r.stars : 0) + "</span></td>" +
+        "<td class='n'>" + (r ? r.bestWpm + " wpm" : "–") + "</td><td class='n'>" + (r ? r.bestAcc + "%" : "–") + "</td><td class='n'>" + (r ? r.plays : 0) + "</td></tr>";
+    }).join("");
+    $("delbtn").textContent = "Remove this typist"; $("delbtn").dataset.armed = "";
+    show("progress");
+  }
+  $("delbtn").addEventListener("click", () => {
+    const b = $("delbtn");
+    if (!b.dataset.armed) { b.dataset.armed = "1"; b.textContent = "Tap again to remove " + P().name + " and all progress"; return; }
+    delete data.profiles[data.current]; data.current = null; save(); renderWho(); show("who");
+  });
+
+  // ---------- Stickers ----------
+  function openStickers() {
+    const s = totalStars();
+    const got = STICKERS.filter((x) => s >= x.at).length;
+    $("stickcount").textContent = got + " of " + STICKERS.length + " collected";
+    $("shelf").innerHTML = STICKERS.map((x) => {
+      const has = s >= x.at;
+      return '<div class="st' + (has ? "" : " locked") + '"><span class="e">' + x.e + '</span><b>' + (has ? esc(x.n) : "???") + '</b><span class="s tnum">' + (has ? "Collected" : "Earn " + x.at + " stars") + "</span></div>";
+    }).join("");
+    show("stickers");
+  }
+
+  // ---------- Confetti ----------
+  const cc = $("confetti"), cx = cc.getContext("2d");
+  function confetti(n) {
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const dpr = window.devicePixelRatio || 1;
+    cc.width = innerWidth * dpr; cc.height = innerHeight * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const cols = ["--sun", "--coral", "--good", "--f-ri", "--f-rr", "--f-lr"].map(cssVar);
+    const ps = Array.from({ length: n }, () => ({ x: innerWidth / 2, y: innerHeight * 0.45, vx: (Math.random() - 0.5) * 900, vy: -300 - Math.random() * 600, r: Math.random() * 6, c: rnd(cols), s: 5 + Math.random() * 6 }));
+    let last = performance.now(), t0 = last;
+    (function f(t) {
+      const dt = Math.min((t - last) / 1000, 0.05); last = t;
+      cx.clearRect(0, 0, innerWidth, innerHeight);
+      ps.forEach((p) => { p.vy += 900 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.r += dt * 8; cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r); cx.fillStyle = p.c; cx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); cx.restore(); });
+      if (t - t0 < 2600) requestAnimationFrame(f); else cx.clearRect(0, 0, innerWidth, innerHeight);
+    })(last);
+  }
+
+  // ---------- Global keys + wiring ----------
+  document.addEventListener("keydown", (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target && e.target.tagName === "INPUT") return;
+    if (!$("modal").hidden) {
+      if (e.key === "Enter" && modalActs && modalActs.enter) { e.preventDefault(); const f = modalActs.enter; closeModal(); f(); }
+      else if (e.key === "Escape") { closeModal(); openMap(); }
+      return;
+    }
+    if (screen === "lesson" && L) {
+      if (e.key.length === 1 || e.key === "Enter") e.preventDefault();
+      lessonKey(e.key);
+    } else if (screen === "game") {
+      if (e.key.length === 1 || e.key === "Enter") e.preventDefault();
+      gameKey(e.key);
+    }
+  });
+  // Buttons should not steal Space during typing.
+  document.addEventListener("keyup", (e) => { if (e.key === " " && (screen === "lesson" || screen === "game")) e.preventDefault(); });
+
+  $("startbtn").addEventListener("click", (e) => { e.currentTarget.blur(); beginTyping(); });
+  $("gstart").addEventListener("click", (e) => { e.currentTarget.blur(); startGame(); });
+  $("lessonback").addEventListener("click", openMap);
+  $("gameback").addEventListener("click", openMap);
+  $("progback").addEventListener("click", openMap);
+  $("stickback").addEventListener("click", openMap);
+  $("gotogame").addEventListener("click", openGame);
+  $("gotoprog").addEventListener("click", openProgress);
+  $("gotostick").addEventListener("click", openStickers);
+  $("switchbtn").addEventListener("click", () => { renderWho(); show("who"); });
+  function syncSound() { $("soundbtn").textContent = "Sound: " + (data.sound ? "on" : "off"); $("soundbtn").setAttribute("aria-pressed", String(!!data.sound)); }
+  $("soundbtn").addEventListener("click", () => { data.sound = !data.sound; save(); syncSound(); });
+  window.addEventListener("resize", () => { if (screen === "game") { sizeCanvas(); drawGame(); } });
+  document.addEventListener("visibilitychange", () => { if (document.hidden && G.running) stopGame(true); });
+
+  buildKeyboard(); buildHands(); syncSound(); renderWho();
+  if (P()) openMap(); else show("who");
+})();
+</script>
+</body></html>
