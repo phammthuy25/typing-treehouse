@@ -83,6 +83,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid 
 .addcard input[type=text] { font: inherit; font-size: 1.2rem; padding: 10px 14px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); width: 100%; }
 .avpick { display: flex; flex-wrap: wrap; gap: 8px; }
 .avpick button { font-size: 1.6rem; width: 50px; height: 50px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); }
+.avsvg { width: 1.15em; height: 1.15em; display: inline-block; vertical-align: -0.2em; }
+.avpick button { display: inline-grid; place-items: center; }
 .avpick button[aria-pressed="true"] { border-color: var(--accent); background: var(--sun); }
 
 /* Map */
@@ -385,7 +387,12 @@ th.n { text-align: right; }
     "Pandas love to eat bamboo.", "Can you hop like a bunny?", "My best friend is kind.", "The bus is big and yellow.",
     "Bees make sweet honey.", "I like to read at night.", "Fish swim in the sea.", "We play tag at the park."
   ];
-  const AVATARS = ["🦊", "🐼", "🐯", "🦄", "🐸", "🐙", "🐨", "🦉", "🐢", "🐬", "🦋", "🐝"];
+  const AVATAR_ART = {
+    sheep: '<svg class="avsvg" viewBox="0 0 100 100" aria-hidden="true"><g fill="#FFFFFF" stroke="#C9D3D8" stroke-width="2.5"><ellipse cx="17" cy="52" rx="13" ry="7" transform="rotate(-20 17 52)"/><ellipse cx="83" cy="52" rx="13" ry="7" transform="rotate(20 83 52)"/></g><g fill="#F7B6C6"><ellipse cx="18" cy="52" rx="8" ry="3.5" transform="rotate(-20 18 52)"/><ellipse cx="82" cy="52" rx="8" ry="3.5" transform="rotate(20 82 52)"/></g><g fill="#FFFFFF" stroke="#C9D3D8" stroke-width="2.5"><circle cx="28" cy="34" r="14"/><circle cx="72" cy="34" r="14"/><circle cx="40" cy="23" r="15"/><circle cx="60" cy="23" r="15"/><ellipse cx="50" cy="60" rx="27" ry="29"/></g><g fill="#FFFFFF"><circle cx="38" cy="38" r="10"/><circle cx="50" cy="33" r="11"/><circle cx="62" cy="38" r="10"/><rect x="30" y="34" width="40" height="10"/></g><g fill="#2E3440"><circle cx="40" cy="58" r="4.5"/><circle cx="60" cy="58" r="4.5"/></g><g fill="#FFFFFF"><circle cx="41.5" cy="56.5" r="1.6"/><circle cx="61.5" cy="56.5" r="1.6"/></g><g fill="#F7A8BC"><circle cx="32" cy="68" r="4.5"/><circle cx="68" cy="68" r="4.5"/></g><path d="M45 68 h10 l-5 5 z" fill="#F08AA6" stroke="#F08AA6" stroke-width="2" stroke-linejoin="round"/><path d="M50 73 v3 M44 77 q6 5 12 0" fill="none" stroke="#2E3440" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    dog: '<svg class="avsvg" viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="55" rx="31" ry="29" fill="#E7B47E"/><path d="M50 27 q-7 12 -5 26 h10 q2 -14 -5 -26z" fill="#FFF4E6"/><ellipse cx="50" cy="70" rx="17" ry="13" fill="#FFF4E6"/><g fill="#9A6340"><ellipse cx="21" cy="52" rx="11" ry="22" transform="rotate(18 21 52)"/><ellipse cx="79" cy="52" rx="11" ry="22" transform="rotate(-18 79 52)"/></g><ellipse cx="62" cy="50" rx="8" ry="7" fill="#C98C5A"/><g fill="#2E3440"><circle cx="39" cy="51" r="4.8"/><circle cx="61" cy="51" r="4.8"/></g><g fill="#FFFFFF"><circle cx="40.6" cy="49.4" r="1.7"/><circle cx="62.6" cy="49.4" r="1.7"/></g><g fill="#F4A28C" opacity=".8"><circle cx="31" cy="63" r="4.5"/><circle cx="69" cy="63" r="4.5"/></g><path d="M50 74 q0 9 6 9 q5 0 4 -7" fill="#F27D8E"/><ellipse cx="50" cy="63" rx="6.5" ry="4.8" fill="#2E3440"/><circle cx="48" cy="61.6" r="1.4" fill="#FFFFFF"/><path d="M50 67 v5 M42 72 q4 4 8 0 q4 4 8 0" fill="none" stroke="#2E3440" stroke-width="2.2" stroke-linecap="round"/></svg>'
+  };
+  const avHTML = (a) => AVATAR_ART[a] || a;
+  const AVATARS = ["sheep", "dog", "🦊", "🐼", "🐯", "🦄", "🐸", "🐙", "🐨", "🦉", "🐢", "🐬", "🦋", "🐝"];
   const STICKERS = [
     { at: 1, e: "🌱", n: "First Sprout" }, { at: 3, e: "🐞", n: "Lucky Ladybug" }, { at: 6, e: "🍓", n: "Berry Good" },
     { at: 10, e: "🌈", n: "Rainbow" }, { at: 15, e: "🚀", n: "Rocket" }, { at: 20, e: "🐉", n: "Dragon" },
@@ -471,7 +478,7 @@ th.n { text-align: right; }
     $("whochip").hidden = !p || name === "who";
     $("starchip").hidden = !p || name === "who";
     $("switchbtn").hidden = !p || name === "who";
-    if (p) { $("whoav").textContent = p.avatar; $("whoname").textContent = p.name; $("starcount").textContent = totalStars(); }
+    if (p) { $("whoav").innerHTML = avHTML(p.avatar); $("whoname").textContent = p.name; $("starcount").textContent = totalStars(); }
     if (name !== "game") stopGame(false);
     window.scrollTo(0, 0);
   }
@@ -483,12 +490,12 @@ th.n { text-align: right; }
     const ids = Object.keys(data.profiles);
     box.innerHTML = ids.map((id) => {
       const p = data.profiles[id];
-      return '<button class="profile" data-id="' + id + '"><span class="big">' + p.avatar + '</span><span class="nm">' + esc(p.name) +
+      return '<button class="profile" data-id="' + id + '"><span class="big">' + avHTML(p.avatar) + '</span><span class="nm">' + esc(p.name) +
         '</span><span class="muted tnum">★ ' + totalStars(p) + " stars</span></button>";
     }).join("");
     box.hidden = ids.length === 0;
     box.querySelectorAll(".profile").forEach((b) => b.addEventListener("click", () => { data.current = b.dataset.id; save(); openMap(); }));
-    $("avpick").innerHTML = AVATARS.map((a) => '<button type="button" aria-pressed="' + (a === pickedAvatar) + '" aria-label="Buddy ' + a + '">' + a + "</button>").join("");
+    $("avpick").innerHTML = AVATARS.map((a) => '<button type="button" aria-pressed="' + (a === pickedAvatar) + '" aria-label="Buddy ' + a + '">' + avHTML(a) + "</button>").join("");
     $("avpick").querySelectorAll("button").forEach((b, i) => b.addEventListener("click", () => { pickedAvatar = AVATARS[i]; renderWho(); }));
   }
   $("addform").addEventListener("submit", (e) => {
