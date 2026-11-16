@@ -122,7 +122,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid 
 .textpanel .c.bad { animation: shake .25s; background: var(--coral); color: #fff; }
 .textpanel .c.sp.cur::after { content: ""; }
 @keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
-.hint { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; min-height: 32px; flex-wrap: wrap; }
+.hint { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; min-height: 32px; }
+.hint .dot { flex-shrink: 0; }
 .dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; border: 2px solid var(--ink); }
 .kbwrap { overflow-x: auto; }
 .kb { display: grid; gap: 5px; max-width: 820px; min-width: 520px; margin: 0 auto; padding: 10px; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; user-select: none; }
@@ -137,7 +138,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid 
 .guide .hint { flex: 1 1 260px; min-width: 0; }
 .hands { flex: 0 1 300px; }
 .hands svg { width: 100%; max-width: 300px; height: auto; display: block; }
-.hands .fg { fill: var(--surface-2); stroke: var(--line); stroke-width: 2; transition: fill .1s; }
+.hands .fg { fill: var(--surface-2); stroke: var(--line); stroke-width: 2; transition: fill .1s, y .2s ease-out, height .2s ease-out; }
+.hands .reach { fill: none; stroke: var(--ink); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
 .hands .palm { fill: var(--surface-2); stroke: var(--line); stroke-width: 2; }
 
 /* Intro overlay inside the desk */
@@ -598,31 +600,57 @@ th.n { text-align: right; }
     // Two hands, palms down: pinky..thumb on left, thumb..pinky on right.
     const L = [["lp", 20, 52, 66], ["lr", 52, 30, 82], ["lm", 86, 20, 92], ["li", 120, 30, 82]];
     const R = [["ri", 284, 30, 82], ["rm", 318, 20, 92], ["rr", 352, 30, 82], ["rp", 386, 52, 66]];
-    let s = '<svg viewBox="0 0 440 190" role="img" aria-label="Hands showing which finger to use">';
+    let s = '<svg viewBox="0 -40 440 230" role="img" aria-label="Hands showing which finger to use">';
     s += '<rect class="palm" x="18" y="104" width="134" height="76" rx="30"/><rect class="palm" x="288" y="104" width="134" height="76" rx="30"/>';
-    L.concat(R).forEach(([id, x, y, h]) => { s += '<rect class="fg" data-f="' + id + '" x="' + x + '" y="' + y + '" width="30" height="' + h + '" rx="15"/>'; });
+    L.concat(R).forEach(([id, x, y, h]) => { s += '<rect class="fg" data-f="' + id + '" data-x="' + x + '" data-y="' + y + '" data-h="' + h + '" x="' + x + '" y="' + y + '" width="30" height="' + h + '" rx="15"/>'; });
     s += '<rect class="fg" data-f="th" x="150" y="112" width="30" height="64" rx="15" transform="rotate(-38 165 144)"/>';
     s += '<rect class="fg" data-f="th" x="260" y="112" width="30" height="64" rx="15" transform="rotate(38 275 144)"/>';
     s += '<text x="85" y="150" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="16" fill="var(--muted)">Left</text>';
     s += '<text x="355" y="150" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="16" fill="var(--muted)">Right</text></svg>';
     $("hands").innerHTML = s;
   }
+  // Keyboard row of each key (0 = numbers, 1 = top, 2 = home, 3 = bottom, 4 = space).
+  const KEYROW = {};
+  ROWS.forEach((row, n) => row.forEach(([k]) => { KEYROW[k] = n; }));
+  const REACH = { 0: -34, 1: -20, 3: 18 };
+  const reachWord = (row) => row === 0 ? "Reach way up with" : row === 1 ? "Reach up with" : row === 3 ? "Reach down with" : "Use";
+  // Stretch a finger up toward the top rows or pull it down toward the bottom row, with an arrow at the tip.
+  function reachFinger(id, row) {
+    const el = document.querySelector('.hands .fg[data-f="' + id + '"][data-y]');
+    const dy = REACH[row] || 0;
+    if (!el || !dy) return;
+    const y = +el.dataset.y + dy, h = +el.dataset.h - dy, cx = +el.dataset.x + 15;
+    el.setAttribute("y", y); el.setAttribute("height", h);
+    el.style.y = y + "px"; el.style.height = h + "px";
+    const a = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    a.setAttribute("class", "reach");
+    a.setAttribute("d", dy < 0 ? "M" + (cx - 9) + " " + (y - 6) + " L" + cx + " " + (y - 16) + " L" + (cx + 9) + " " + (y - 6)
+      : "M" + (cx - 9) + " " + (y - 16) + " L" + cx + " " + (y - 6) + " L" + (cx + 9) + " " + (y - 16));
+    el.parentNode.appendChild(a);
+  }
   function highlight(ch) {
     document.querySelectorAll(".k.on").forEach((k) => k.classList.remove("on"));
-    document.querySelectorAll(".hands .fg").forEach((f) => { f.style.fill = ""; });
+    document.querySelectorAll(".hands .reach").forEach((a) => a.remove());
+    document.querySelectorAll(".hands .fg").forEach((f) => {
+      f.style.fill = "";
+      if (f.dataset.y) { f.setAttribute("y", f.dataset.y); f.setAttribute("height", f.dataset.h); f.style.y = ""; f.style.height = ""; }
+    });
     if (ch == null) { $("hint").innerHTML = ""; return; }
     const { key, shift } = baseKey(ch);
     const f = FMAP[key] || "th";
     const keyEl = document.querySelector('.k[data-k="' + CSS.escape(key) + '"]');
     if (keyEl) keyEl.classList.add("on");
     const lit = [f];
-    let msg = "Use your <span>" + FINGERS[f] + "</span>" + (key === " " ? " on the space bar" : " for <b>" + esc(capLabel(ch)) + "</b>");
+    const row = KEYROW[key];
+    reachFinger(f, row);
+    let msg = reachWord(row) + " your <span>" + FINGERS[f] + "</span>" + (key === " " ? " on the space bar" : " for <b>" + esc(capLabel(ch)) + "</b>");
     if (shift) {
       const sf = f[0] === "l" ? "rp" : "lp";
       const sk = document.querySelector('.k[data-k="' + (sf === "rp" ? "ShiftR" : "ShiftL") + '"]');
       if (sk) sk.classList.add("on");
       lit.push(sf);
-      msg = "Hold <span>Shift</span> with your " + FINGERS[sf] + ", then " + FINGERS[f] + " for <b>" + esc(ch) + "</b>";
+      reachFinger(sf, 3);
+      msg = "Reach down and hold <span>Shift</span> with your " + FINGERS[sf] + ", then " + reachWord(row).toLowerCase() + " your " + FINGERS[f] + " for <b>" + esc(ch) + "</b>";
     }
     lit.forEach((id) => document.querySelectorAll('.hands .fg[data-f="' + id + '"]').forEach((el) => { el.style.fill = fcolor(id); }));
     $("hint").innerHTML = '<i class="dot" style="background:' + fcolor(f) + '"></i><span>' + msg + "</span>";
